@@ -11,6 +11,7 @@
     </configurations>
 
     <dependencies>
+        <dependency org="net.java.dev.appframework" name="appframework" rev="1.03" conf="runtime->default"/>
         <dependency org="org.hibernate" name="hibernate-core" rev="3.3.2.GA" conf="runtime->default,optional"/>
         <dependency org="org.hibernate" name="hibernate-annotations" rev="3.4.0.GA" conf="runtime->default" />
         <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.5.6" conf="runtime->default"/>

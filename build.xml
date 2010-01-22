@@ -7,9 +7,8 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="swim_program" default="default" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="swim_program" default="compile" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <description>Builds, tests, and runs the project swim_program.</description>
-    <import file="nbproject/build-impl.xml"/>
     <property name="ivy.install.version" value="2.1.0"/>
     <property name="ivy.jar.dir" value="${basedir}/ivy"/>
     <property name="ivy.jar.file" value="${ivy.jar.dir}/ivy.jar"/>
@@ -74,19 +73,31 @@
     nbproject/build-impl.xml file. 
 
     -->
+  <path id="javac.classpath.ref">
+        <fileset dir="lib">
+                <include name="**/*.jar"/>
+        </fileset>
+  </path>
+
+<target name="compile">
+  <mkdir dir="build/classes"/>
+  <javac classpathref="javac.classpath.ref" srcdir="src" destdir="build/classes"/>
+  <copy file="src/hibernate.cfg.xml" todir="build/classes"/>
+  <copy file="src/log4j.xml" todir="build/classes"/>
+</target>
+
+<target name="run">
+  <path id="javac.runtime.classpath">
+    <path refid="javac.classpath.ref"/>
+    <pathelement location="build/classes"/>
+  </path>
+  <java classname="budgeter.BudgeterApp" classpathref="javac.runtime.classpath" />
+</target>
 
 <target name="resolve" description="resolve dependencies">
   <ivy:retrieve  pattern="${ivy.lib.dir}/[conf]/[artifact]-[revision].[ext]"/>
 
 </target>
-
-<property name="lib.dir"     value="lib"/>
-
-<path id="classpath">
-   <pathelement location="build/classes"/>
-   <fileset dir="${lib.dir}" includes="**/*.jar"/>
-</path>
-
 
 <!-- Useful shortcuts -->
 <patternset id="meta.files">
