@@ -1,8 +1,0 @@
-CREATE USER SA PASSWORD "" ADMIN
-/*C1*/SET SCHEMA PUBLIC
-CONNECT USER SA
-SET AUTOCOMMIT FALSE
-SET AUTOCOMMIT TRUE
-drop table students if exists
-create table students (id bigint not null, primary key (id))
-DISCONNECT
