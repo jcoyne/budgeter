@@ -98,7 +98,8 @@ public class PurchaseTableModel extends AbstractTableModel implements TableModel
         } else if (arg1 == 1) {
             return purchases.get(arg0).getNote();
         } else if (arg1 == 2) {
-            return money.format(purchases.get(arg0).getAmount());
+//          return money.format(purchases.get(arg0).getAmount());
+            return purchases.get(arg0).getAmount();
         } else {
                 throw new RuntimeException();
         }

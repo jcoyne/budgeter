@@ -37,9 +37,10 @@ public class BudgeterView extends FrameView {
         // Align the amount right
         NumberFormat right = NumberFormat.getCurrencyInstance();
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
-        //PurchaseTableModel.cols.get("Amount")
+        PurchaseTableModel.cols.get("Amount");
         renderer.setHorizontalAlignment(SwingConstants.RIGHT);
-        register.getColumn(2).setCellRenderer(renderer);
+        register.setDefaultRenderer(Double.class,renderer);
+				System.out.println("Col class is: " + register.getColumnClass(2));
 
 
         // status bar initialization - message timeout, idle icon and busy animation, etc
