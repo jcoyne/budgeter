@@ -23,15 +23,14 @@ import budgeter.domain.Purchase;
 public class PurchaseTableModel extends AbstractTableModel implements TableModel {
     private List<Purchase> purchases;
 
-
-    private DecimalFormat money = new DecimalFormat("$0.00");
     private DateFormat date = DateFormat.getDateInstance(SimpleDateFormat.SHORT);
 
     private static HashMap<Integer, String> colNames =
             new HashMap<Integer, String>(){{
                 put(0, "Date");
                 put(1, "Note");
-                put(2, "Amount");
+                put(2, "Account");
+                put(3, "Amount");
     }};
 
     public static HashMap<String, Integer> cols = reverse(colNames);
@@ -93,13 +92,15 @@ public class PurchaseTableModel extends AbstractTableModel implements TableModel
     }
 
     public Object getValueAt(int arg0, int arg1) {
+        Purchase purch = purchases.get(arg0);
         if (arg1 == 0 ) {
-            return date.format(purchases.get(arg0).getDate());
+            return date.format(purch.getDate());
         } else if (arg1 == 1) {
-            return purchases.get(arg0).getNote();
+            return purch.getNote();
         } else if (arg1 == 2) {
-//          return money.format(purchases.get(arg0).getAmount());
-            return purchases.get(arg0).getAmount();
+            return purch.getAccount().getName();
+        } else if (arg1 == 3) {
+            return purch.getAmount();
         } else {
                 throw new RuntimeException();
         }
