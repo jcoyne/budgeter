@@ -10,6 +10,7 @@ package budgeter.domain;
  * @author jcoyne
  */
 import java.util.List;
+import java.util.Set;
 import javax.persistence.*;
 import org.hibernate.*;
 import budgeter.Util;
@@ -19,8 +20,13 @@ public class Account {
     @Id @GeneratedValue
     @Column(name="id")
     private Long id;
+
     @Column(name="name")
     private String name;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinColumn(name="account_id")
+    private Set<Purchase> purchases;
 
     public Account(String name) {
         this.name = name;
@@ -46,6 +52,17 @@ public class Account {
     public void setName(String name) {
         this.name = name;
     }
+
+    public Set<Purchase> getPurchases() {
+        return purchases;
+    }
+
+    public void setPurchases(Set<Purchase> purchases) {
+        this.purchases = purchases;
+    }
+
+
+
 
     @Override
     public String toString() {

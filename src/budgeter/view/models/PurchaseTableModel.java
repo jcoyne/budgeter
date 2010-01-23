@@ -5,6 +5,7 @@
 
 package budgeter.view.models;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -25,6 +26,8 @@ public class PurchaseTableModel extends AbstractTableModel implements TableModel
 
     private DateFormat date = DateFormat.getDateInstance(SimpleDateFormat.SHORT);
 
+    private SummaryTableModel summary;
+    
     private static HashMap<Integer, String> colNames =
             new HashMap<Integer, String>(){{
                 put(0, "Date");
@@ -43,13 +46,15 @@ public class PurchaseTableModel extends AbstractTableModel implements TableModel
         return out;
     }
 
-    public PurchaseTableModel() {
+    public PurchaseTableModel(SummaryTableModel stm) {
         purchases = Purchase.getPurchases();
+        this.summary = stm;
     }
 
     @Override
     public void fireTableDataChanged() {
         purchases = Purchase.getPurchases();
+        summary.fireTableDataChanged();
         super.fireTableDataChanged();
     }
 
@@ -70,7 +75,7 @@ public class PurchaseTableModel extends AbstractTableModel implements TableModel
             purchase.setNote((String) value);
         else if (col == 2) {
             try {
-                purchase.setAmount(Double.valueOf((String) value));
+                purchase.setAmount(new BigDecimal((String) value));
             } catch (NumberFormatException e) { }
         }
         Purchase.update(purchase);

@@ -4,9 +4,11 @@
  */
 
 package budgeter.domain;
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.*;
@@ -29,7 +31,7 @@ public class Purchase {
     private String note;
 
     @Column(name="amount")
-    private Double amount;
+    private BigDecimal amount;
 
     @Column(name="date")
     private Date date;
@@ -41,18 +43,18 @@ public class Purchase {
     public Purchase() {
     }
 
-    public Purchase(String note, Double amount, Date date, Account account) {
+    public Purchase(String note, BigDecimal amount, Date date, Account account) {
         this.note = note;
         this.amount = amount;
         this.date = date;
         this.account = account;
     }
 
-    public Double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(Double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -90,12 +92,12 @@ public class Purchase {
 
     
 
-    public static void createPurchase(String note, Date date, Double amount, Account account) {
+    public static void createPurchase(String note, Date date, BigDecimal amount, Account account) {
         save(new Purchase(note, amount, date, account));
     }
 
     public static void createPurchase(String note, String date, String amount, Object account) throws ParseException {
-        createPurchase(note, DateFormat.getDateInstance(SimpleDateFormat.SHORT).parse(date), Double.parseDouble(amount), (Account) account);
+        createPurchase(note, DateFormat.getDateInstance(SimpleDateFormat.SHORT).parse(date), new BigDecimal(amount), (Account) account);
     }
 
     public static void save(Purchase p) {
@@ -127,6 +129,14 @@ public class Purchase {
         newTransaction.commit();
         newSession.close();
         return purchases;
+    }
+
+    public static BigDecimal sum(Collection<Purchase> l) {
+        BigDecimal aggregator = new BigDecimal(0);
+        for (Purchase p : l) {
+            aggregator = aggregator.add(p.getAmount());
+        }
+        return aggregator;
     }
 
 }

@@ -14,9 +14,15 @@ import budgeter.domain.Account;
  */
 public class AccountListModel extends javax.swing.DefaultComboBoxModel{
     private List<Account> accounts = Account.getAccounts();
+    private SummaryTableModel summary;
+
+    public AccountListModel(SummaryTableModel stm) {
+        summary = stm;
+    }
 
     public void refresh() {
         accounts = Account.getAccounts();
+        summary.fireTableDataChanged();
         fireContentsChanged(this, 0, accounts.size());
     }
 
