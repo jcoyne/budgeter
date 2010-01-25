@@ -5,14 +5,12 @@ package budgeter;
 
 import budgeter.domain.Account;
 import budgeter.domain.Purchase;
-import budgeter.view.editors.CategoryEditor;
 import budgeter.view.models.AccountListModel;
 import budgeter.view.models.PurchaseTableModel;
 import budgeter.view.models.SummaryTableModel;
 import budgeter.view.renderers.MoneyRenderer;
 import java.text.DateFormat;
 import java.util.Date;
-import javax.swing.DefaultCellEditor;
 import javax.swing.table.TableColumn;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
@@ -26,7 +24,6 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import java.text.ParseException;
-import javax.swing.JComboBox;
 
 /**
  * The application's main frame.
@@ -37,13 +34,8 @@ public class BudgeterView extends FrameView {
         super(app);
         initComponents();
 
-        // Align the amount right
-        TableColumn purchaseAmount = register.getColumnModel().getColumn(PurchaseTableModel.cols.get("Amount"));
-        purchaseAmount.setCellRenderer(new MoneyRenderer());
-
-        TableColumn purchaseCategory = register.getColumnModel().getColumn(PurchaseTableModel.cols.get("Account"));
-        purchaseCategory.setCellEditor(CategoryEditor.getCategoryEditor());
-        
+        register.getModel().addTableModelListener(summaryTableModel);
+        accounts.getModel().addListDataListener(summaryTableModel);
 
         TableColumn col2 = summary.getColumnModel().getColumn(SummaryTableModel.cols.get("Amount"));
         col2.setCellRenderer(new MoneyRenderer());
@@ -128,8 +120,6 @@ public class BudgeterView extends FrameView {
         mainPanel = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        register = new javax.swing.JTable();
         date = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -139,6 +129,8 @@ public class BudgeterView extends FrameView {
         jLabel4 = new javax.swing.JLabel();
         amount = new javax.swing.JTextField();
         account = new javax.swing.JComboBox();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        register = new budgeter.view.PurchaseTable();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         accounts = new javax.swing.JList();
@@ -165,12 +157,6 @@ public class BudgeterView extends FrameView {
         jTabbedPane1.setName("jTabbedPane1"); // NOI18N
 
         jPanel1.setName("jPanel1"); // NOI18N
-
-        jScrollPane2.setName("jScrollPane2"); // NOI18N
-
-        register.setModel(purchaseTableModel);
-        register.setName("register"); // NOI18N
-        jScrollPane2.setViewportView(register);
 
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(budgeter.BudgeterApp.class).getContext().getResourceMap(BudgeterView.class);
         date.setText(resourceMap.getString("date.text")); // NOI18N
@@ -205,14 +191,15 @@ public class BudgeterView extends FrameView {
         account.setModel(accountListModel);
         account.setName("account"); // NOI18N
 
+        jScrollPane4.setName("jScrollPane4"); // NOI18N
+
+        register.setName("register"); // NOI18N
+        jScrollPane4.setViewportView(register);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
-                .addContainerGap())
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -235,13 +222,17 @@ public class BudgeterView extends FrameView {
                         .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
                         .addGap(63, 63, 63)))
                 .addGap(194, 194, 194))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(date, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
@@ -259,7 +250,7 @@ public class BudgeterView extends FrameView {
                     .addComponent(jLabel4))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton1)
-                .addContainerGap(69, Short.MAX_VALUE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(resourceMap.getString("jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
@@ -444,7 +435,7 @@ public class BudgeterView extends FrameView {
         // TODO add your handling code here:
         try {
             Purchase.createPurchase(note.getText(), date.getText(), amount.getText(), account.getSelectedItem());
-            purchaseTableModel.fireTableDataChanged();
+            ((PurchaseTableModel) register.getModel()).fireTableDataChanged();
             amount.setText("");
             note.setText("");
             date.setText(DateFormat.getDateInstance(DateFormat.SHORT).format(new Date()));
@@ -476,22 +467,21 @@ public class BudgeterView extends FrameView {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JTextField note;
     private javax.swing.JProgressBar progressBar;
-    private javax.swing.JTable register;
+    private budgeter.view.PurchaseTable register;
     private javax.swing.JLabel statusAnimationLabel;
     private javax.swing.JLabel statusMessageLabel;
     private javax.swing.JPanel statusPanel;
     private javax.swing.JTable summary;
     // End of variables declaration//GEN-END:variables
     private SummaryTableModel summaryTableModel = new SummaryTableModel();
-    private AccountListModel accountListModel = new AccountListModel(summaryTableModel);
-    private PurchaseTableModel purchaseTableModel = new PurchaseTableModel(summaryTableModel);
+    private AccountListModel accountListModel = new AccountListModel();
     private final Timer messageTimer;
     private final Timer busyIconTimer;
     private final Icon idleIcon;

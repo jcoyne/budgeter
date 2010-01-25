@@ -8,6 +8,10 @@ import budgeter.domain.Account;
 import budgeter.domain.Purchase;
 import java.util.HashMap;
 import java.util.List;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
@@ -15,7 +19,8 @@ import javax.swing.table.TableModel;
  *
  * @author jcoyne
  */
-public class SummaryTableModel extends AbstractTableModel implements TableModel {
+public class SummaryTableModel extends AbstractTableModel 
+        implements TableModel, TableModelListener, ListDataListener {
 
     private List<Account> accounts;
     private static HashMap<Integer, String> colNames =
@@ -39,6 +44,24 @@ public class SummaryTableModel extends AbstractTableModel implements TableModel 
     public SummaryTableModel() {
         accounts = Account.getAccounts();
     }
+
+    public void tableChanged(TableModelEvent arg0) {
+        fireTableDataChanged();
+    }
+
+    public void contentsChanged(ListDataEvent arg0) {
+        fireTableDataChanged();
+    }
+
+    public void intervalAdded(ListDataEvent arg0) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void intervalRemoved(ListDataEvent arg0) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
 
     @Override
     public void fireTableDataChanged() {

@@ -8,10 +8,8 @@ package budgeter.view.models;
 import budgeter.domain.Account;
 import java.math.BigDecimal;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -27,7 +25,6 @@ public class PurchaseTableModel extends AbstractTableModel implements TableModel
 
     private DateFormat date = DateFormat.getDateInstance(SimpleDateFormat.SHORT);
 
-    private SummaryTableModel summary;
     
     private static HashMap<Integer, String> colNames =
             new HashMap<Integer, String>(){{
@@ -47,9 +44,8 @@ public class PurchaseTableModel extends AbstractTableModel implements TableModel
         return out;
     }
 
-    public PurchaseTableModel(SummaryTableModel stm) {
+    public PurchaseTableModel() { 
         purchases = Purchase.getPurchases();
-        this.summary = stm;
     }
 
     // Run after an new line is created.
@@ -57,7 +53,6 @@ public class PurchaseTableModel extends AbstractTableModel implements TableModel
     public void fireTableDataChanged() {
         System.out.println("Table data changed");
         purchases = Purchase.getPurchases();
-        summary.fireTableDataChanged();
         super.fireTableDataChanged();
     }
 
@@ -87,7 +82,6 @@ public class PurchaseTableModel extends AbstractTableModel implements TableModel
             } catch (NumberFormatException e) { }
         }
         Purchase.update(purchase);
-        summary.fireTableDataChanged();
         fireTableCellUpdated(row, col);
     }
 
