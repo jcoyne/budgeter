@@ -5,12 +5,14 @@ package budgeter;
 
 import budgeter.domain.Account;
 import budgeter.domain.Purchase;
+import budgeter.view.editors.CategoryEditor;
 import budgeter.view.models.AccountListModel;
 import budgeter.view.models.PurchaseTableModel;
 import budgeter.view.models.SummaryTableModel;
 import budgeter.view.renderers.MoneyRenderer;
 import java.text.DateFormat;
 import java.util.Date;
+import javax.swing.DefaultCellEditor;
 import javax.swing.table.TableColumn;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ResourceMap;
@@ -24,6 +26,7 @@ import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import java.text.ParseException;
+import javax.swing.JComboBox;
 
 /**
  * The application's main frame.
@@ -35,8 +38,12 @@ public class BudgeterView extends FrameView {
         initComponents();
 
         // Align the amount right
-        TableColumn col = register.getColumnModel().getColumn(PurchaseTableModel.cols.get("Amount"));
-        col.setCellRenderer(new MoneyRenderer());
+        TableColumn purchaseAmount = register.getColumnModel().getColumn(PurchaseTableModel.cols.get("Amount"));
+        purchaseAmount.setCellRenderer(new MoneyRenderer());
+
+        TableColumn purchaseCategory = register.getColumnModel().getColumn(PurchaseTableModel.cols.get("Account"));
+        purchaseCategory.setCellEditor(CategoryEditor.getCategoryEditor());
+        
 
         TableColumn col2 = summary.getColumnModel().getColumn(SummaryTableModel.cols.get("Amount"));
         col2.setCellRenderer(new MoneyRenderer());

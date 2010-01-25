@@ -20,11 +20,16 @@ public class AccountListModel extends javax.swing.DefaultComboBoxModel{
         summary = stm;
     }
 
+    public AccountListModel() {
+    }
+    
     public void refresh() {
         accounts = Account.getAccounts();
-        summary.fireTableDataChanged();
+        if (summary != null)
+            summary.fireTableDataChanged();
         fireContentsChanged(this, 0, accounts.size());
     }
+
 
     @Override
     public int getSize() { return accounts.size(); }

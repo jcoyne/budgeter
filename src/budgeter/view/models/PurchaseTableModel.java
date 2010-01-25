@@ -5,6 +5,7 @@
 
 package budgeter.view.models;
 
+import budgeter.domain.Account;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -51,8 +52,10 @@ public class PurchaseTableModel extends AbstractTableModel implements TableModel
         this.summary = stm;
     }
 
+    // Run after an new line is created.
     @Override
     public void fireTableDataChanged() {
+        System.out.println("Table data changed");
         purchases = Purchase.getPurchases();
         summary.fireTableDataChanged();
         super.fireTableDataChanged();
@@ -67,18 +70,24 @@ public class PurchaseTableModel extends AbstractTableModel implements TableModel
     @Override
     public void setValueAt(Object value, int row, int col) {
         Purchase purchase = purchases.get(row);
-        if (col == 0) {
+        if (col == cols.get("Date")) {
             try {
               purchase.setDate(DateFormat.getDateInstance(SimpleDateFormat.SHORT).parse((String)value));
             } catch (ParseException e) {}
-        } else if (col == 1)
+        } else if (col == cols.get("Note"))
             purchase.setNote((String) value);
-        else if (col == 2) {
+        else if (col == cols.get("Account"))
+            if (value instanceof String)
+                System.out.println("Value is a string but it should be an Account ("+value+")");
+            else
+                purchase.setAccount((Account) value);
+        else if (col == cols.get("Amount")) {
             try {
                 purchase.setAmount(new BigDecimal((String) value));
             } catch (NumberFormatException e) { }
         }
         Purchase.update(purchase);
+        summary.fireTableDataChanged();
         fireTableCellUpdated(row, col);
     }
 

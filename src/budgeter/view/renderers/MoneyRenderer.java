@@ -5,9 +5,9 @@
 
 package budgeter.view.renderers;
 
+import budgeter.view.ComponentDecorator;
 import java.awt.Component;
 import java.text.NumberFormat;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -16,13 +16,16 @@ import javax.swing.table.TableCellRenderer;
  *
  * @author jcoyne
  */
-public class MoneyRenderer extends JLabel implements TableCellRenderer {
+public class MoneyRenderer extends DefaultTableCellRenderer implements TableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int rowIndex, int vColIndex) {
         NumberFormat right = NumberFormat.getCurrencyInstance();
         setText(right.format(value));
         setHorizontalAlignment(RIGHT);
+
+        ComponentDecorator.setColor(this, isSelected);
+
         return this;
     }
 
